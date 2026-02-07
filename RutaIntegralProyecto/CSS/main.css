@@ -251,3 +251,25 @@ body {
         display: flex;
     }
 }
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url('../assets/img/pixelart_starfield.png'); 
+    background-repeat: repeat;
+    background-size: 320px;
+    image-rendering: pixelated; 
+    animation: moverEspacio 60s linear infinite;
+    color: white;
+}
+
+/* Animación para que el fondo se mueva en diagonal */
+@keyframes moverEspacio {
+    from { background-position: 0 0; }
+    to { background-position: -320px -320px; }
+}
