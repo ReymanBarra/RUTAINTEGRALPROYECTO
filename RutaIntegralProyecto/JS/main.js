@@ -22,3 +22,10 @@ if (btnInfo) {
         window.location.href = "Pages/info.html";
     });
 }
+
+const btnBack = document.getElementById("btnBack");
+if (btnBack) {
+    btnBack.addEventListener("click", () => {
+        window.location.href = "../index.html";
+    });
+}
