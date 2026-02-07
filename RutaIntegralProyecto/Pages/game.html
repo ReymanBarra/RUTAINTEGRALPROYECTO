@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego - Ruta Integral</title>
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="../CSS/main.css">
+    <link rel="stylesheet" href="../CSS/animations.css">
+    <link rel="stylesheet" href="../CSS/responsive.css">
+</head>
+
+<body>
+
+    <main class="game-container">
+
+        <!-- Barra de progreso -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Escenario del juego -->
+        <div class="scene">
+
+            <div class="side left-side"></div>
+            <div class="side right-side"></div>
+
+
+            <!-- Camino -->
+            <div class="road">
+                <div class="center-line"></div>
+            </div>
+
+            <!-- Personaje -->
+            <div class="character" id="character"></div>
+
+            <!-- Obstáculo (por ahora solo visual) -->
+            <div class="obstacle" id="obstacle"></div>
+
+            <!-- Panel de decisión -->
+            <div class="decision-panel" id="decisionPanel">
+                <p class="decision-title">Elige una opción para continuar</p>
+
+                <div class="decision-buttons">
+                    <button class="option-btn" data-correct="false">Opción A</button>
+                    <button class="option-btn" data-correct="true">Opción B</button>
+                    <button class="option-btn" data-correct="false">Opción C</button>
+                </div>
+
+                <p class="feedback" id="feedback"></p>
+            </div>
+
+            <div class="mobile-controls" id="mobileControls">
+                <button id="btnLeft">◀</button>
+                <button id="btnCenter">●</button>
+                <button id="btnRight">▶</button>
+            </div>
+
+
+
+        </div>
+
+    </main>
+
+    <!-- Scripts -->
+    <script src="../JS/gameLogic.js"></script>
+    <script src="../JS/animation.js"></script>
+
+</body>
+
+</html>
