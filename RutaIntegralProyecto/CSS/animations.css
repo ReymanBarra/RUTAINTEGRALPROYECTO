@@ -24,7 +24,7 @@
   position:absolute;
   top:0; bottom:0;
   width: 10px;
-  background: #e7e7e7;
+  background: #6e0b0b;
   opacity: 0.9;
 }
 .road::before{ left: 18%; }
