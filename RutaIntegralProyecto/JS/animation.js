@@ -1,4 +1,4 @@
-const character = document.getElementById("character");
+const characterEl = document.getElementById("character");
 
 // posiciones (en % del ancho)
 const lanes = ["35%", "50%", "65%"];
@@ -6,7 +6,9 @@ let laneIndex = 1; // inicia en centro
 
 function setLane(index){
   laneIndex = Math.max(0, Math.min(2, index));
-  character.style.left = lanes[laneIndex];
+  if (characterEl) {
+    characterEl.style.left = lanes[laneIndex];
+  }
 }
 
 // teclado

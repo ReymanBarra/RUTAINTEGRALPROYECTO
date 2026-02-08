@@ -4,6 +4,79 @@ const obstacle = document.getElementById("obstacle");
 const decisionPanel = document.getElementById("decisionPanel");
 const feedback = document.getElementById("feedback");
 const options = document.querySelectorAll(".option-btn");
+const character = document.getElementById("character");
+
+// PERSONAJES - Config con idle de espaldas
+const imgBase = '../assets/img/personajes/';
+const characterSpriteSets = {
+    'estudiante': {
+        idle: imgBase + 'Male person/PNG/Poses/character_malePerson_back.png',
+        idleFallback: imgBase + 'Male person/PNG/Poses/character_malePerson_idle.png',
+    },
+    'matematico': {
+        idle: imgBase + 'Female person/PNG/Poses/character_femalePerson_back.png',
+        idleFallback: imgBase + 'Female person/PNG/Poses/character_femalePerson_idle.png',
+    },
+    'ingeniero':  {
+        idle: imgBase + 'Male adventurer/PNG/Poses/character_maleAdventurer_back.png',
+        idleFallback: imgBase + 'Male adventurer/PNG/Poses/character_maleAdventurer_idle.png',
+    },
+    'cientifico': {
+        idle: imgBase + 'Female adventurer/PNG/Poses/character_femaleAdventurer_back.png',
+        idleFallback: imgBase + 'Female adventurer/PNG/Poses/character_femaleAdventurer_idle.png',
+    },
+    'genio':      {
+        idle: imgBase + 'Zombie/PNG/Poses/character_zombie_back.png',
+        idleFallback: imgBase + 'Zombie/PNG/Poses/character_zombie_idle.png',
+    },
+    'robot':      {
+        idle: imgBase + 'Robot/PNG/Poses/character_robot_back.png',
+        idleFallback: imgBase + 'Robot/PNG/Poses/character_robot_idle.png',
+    }
+};
+
+function applyCharacterFrame(spriteUrl) {
+    if (!character) return;
+    character.style.backgroundImage = `url(${spriteUrl})`;
+    character.style.backgroundSize = 'contain';
+    character.style.backgroundRepeat = 'no-repeat';
+    character.style.backgroundPosition = 'center bottom';
+    character.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = spriteUrl;
+    img.alt = 'Personaje';
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.objectFit = 'contain';
+    img.style.imageRendering = 'pixelated';
+    character.appendChild(img);
+}
+
+// Cargar personaje seleccionado desde localStorage
+function loadSelectedCharacter() {
+    const selectedCharacterId = localStorage.getItem('selectedCharacter') || 'estudiante';
+    const setConfig = characterSpriteSets[selectedCharacterId] || characterSpriteSets['estudiante'];
+    const idleSprite = setConfig.idle;
+    const fallback = setConfig.idleFallback;
+
+    console.log('Intentando cargar personaje:', selectedCharacterId);
+    console.log('Sprite idle:', idleSprite);
+
+    // Mostrar frame idle de espaldas de inmediato
+    applyCharacterFrame(idleSprite);
+
+    // Si falla el sprite de espalda, usar fallback frontal
+    const imgTest = new Image();
+    imgTest.src = idleSprite;
+    imgTest.onerror = () => {
+        console.warn('No se encontró sprite de espalda, usando fallback frontal');
+        applyCharacterFrame(fallback);
+    };
+    imgTest.onload = () => {
+        // Activar animación de bobbing (CSS)
+        if (character) character.classList.add('running');
+    };
+}
 
 // 2. CONFIGURACIÓN DE AUDIO (Integrada)
 // Usamos ../ porque game.html está dentro de la carpeta Pages
@@ -90,6 +163,9 @@ function finishGame() {
 
 // 7. INICIO AL CARGAR (Con manejo de Autoplay)
 window.addEventListener("load", () => {
+    // Cargar el personaje seleccionado
+    loadSelectedCharacter();
+    
     // Intentar sonar apenas carga (funciona si el clic en index.html fue suficiente)
     bgMusic.play().catch(() => {
         console.log("El navegador bloqueó el autoplay. Sonará al interactuar.");
