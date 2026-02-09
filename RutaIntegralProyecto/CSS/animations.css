@@ -119,3 +119,174 @@
   from{ background-position-y: 0; }
   to{ background-position-y: 200px; }
 }
+
+/* ========================= */
+/* ANIMACIONES DE COLISIÓN Y AVANCE */
+/* ========================= */
+
+/* Colisión: El personaje rebota hacia atrás */
+@keyframes characterCollide {
+  0% {
+    transform: translateX(-50%) translateY(0);
+  }
+  25% {
+    transform: translateX(-50%) translateY(-20px);
+  }
+  50% {
+    transform: translateX(-50%) translateY(0) rotateZ(-5deg);
+  }
+  75% {
+    transform: translateX(-50%) translateY(-10px) rotateZ(5deg);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.character.colliding {
+  animation: characterCollide 0.6s ease-out forwards !important;
+}
+
+/* Avance: El personaje se mueve hacia adelante */
+@keyframes characterAdvance {
+  0% {
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    transform: translateX(-50%) translateY(-50px);
+  }
+}
+
+.character.advancing {
+  animation: characterAdvance 0.5s ease-out forwards;
+}
+
+/* Obstáculo se desvanece cuando se avanza */
+@keyframes obstacleDisappear {
+    0% {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(-50%) scale(1.2) rotateZ(10deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateX(-50%) scale(0) rotateZ(20deg);
+        opacity: 0;
+    }
+}
+
+.obstacle.disappearing {
+  animation: obstacleDisappear 0.5s ease-out forwards;
+}
+
+/* ========================= */
+/* ANIMACIÓN DE VIBRACIÓN */
+/* ========================= */
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* ========================= */
+/* EFECTOS DE PARTÍCULAS */
+/* ========================= */
+
+.particles-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 5;
+}
+
+.particle {
+    position: absolute;
+    pointer-events: none;
+}
+
+/* Confeti cayendo con trayectoria */
+@keyframes confetiFall {
+    0% {
+        transform: translateY(0) translateX(0) rotateZ(0deg);
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) translateX(var(--tx, 50px)) rotateZ(360deg);
+        opacity: 0;
+    }
+}
+
+.particle.confetti {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    animation: confetiFall 2s ease-in forwards;
+}
+
+/* Chispas/estrellas */
+@keyframes sparkleFall {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(60px) scale(0);
+    }
+}
+
+.particle.sparkle {
+    font-size: 20px;
+    animation: sparkleFall 1.5s ease-out forwards;
+}
+
+/* Luz explosiva */
+@keyframes explodeLight {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
+/* ========================= */
+/* ANIMACIÓN DE PUNTOS */
+/* ========================= */
+
+@keyframes scorePopup {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+.particle.light {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    animation: explodeLight 0.8s ease-out forwards;
+}

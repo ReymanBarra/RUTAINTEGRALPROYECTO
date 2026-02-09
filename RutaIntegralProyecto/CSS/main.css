@@ -422,13 +422,47 @@ body {
     width: 0%;
     background-color: #00e6ff;
     transition: width 0.3s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.attempts-display {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    color: #ff4444;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+    z-index: 10;
+}
+
+.score-display {
+    font-size: 1rem;
+    color: #000;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+    z-index: 10;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    padding: 0 8px;
+}
+
+.score-display.animate {
+    animation: scorePopup 0.5s ease-out;
 }
 
 /* Escenario */
 .scene {
     flex: 1;
     position: relative;
-    background: linear-gradient(#2c5364, #0f2027);
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)), url('../assets/img/prettysleepy1-alien-3233076_1920.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     overflow: hidden;
     perspective: 800px;
     perspective-origin: 50% 80%;
@@ -468,23 +502,275 @@ body {
     50% { transform: translateY(-5px); }
 }
 
-/* Obstáculo */
+/* Obstáculo - Lava/Peligro animado */
 .obstacle {
-    width: 80px;
-    height: 80px;
-    background-color: #999;
+    width: 100px;
+    height: 100px;
     position: absolute;
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    border-radius: 10px;
+    border-radius: 50%;
     z-index: 1;
     opacity: 0;
     transition: opacity 0.5s ease;
+    
+    /* Gradiente de lava (por defecto) */
+    background: radial-gradient(circle at 30% 30%, #ff6b1a, #ff3333, #cc0000);
+    box-shadow: 0 0 30px rgba(255, 51, 51, 0.8), 
+                inset -10px -10px 20px rgba(0, 0, 0, 0.3),
+                inset 10px 10px 20px rgba(255, 100, 0, 0.5);
+}
+
+.obstacle::before {
+    content: "⚠";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    color: rgba(255, 255, 255, 0.7);
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+    animation: obstacleFloat 2s ease-in-out infinite;
+}
+
+.obstacle::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 70% 70%, rgba(255, 200, 0, 0.4), transparent);
+    animation: obstaclePulse 1.5s ease-in-out infinite;
 }
 
 .obstacle.active {
     opacity: 1;
+    animation: obstaclePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ====================== */
+/* TIPOS DE OBSTÁCULOS */
+/* ====================== */
+
+/* TIPO 1: LAVA */
+.obstacle.type-lava {
+    background: radial-gradient(circle at 30% 30%, #ff6b1a, #ff3333, #cc0000);
+    box-shadow: 0 0 30px rgba(255, 51, 51, 0.8), 
+                inset -10px -10px 20px rgba(0, 0, 0, 0.3),
+                inset 10px 10px 20px rgba(255, 100, 0, 0.5);
+}
+
+.obstacle.type-lava::before {
+    content: "🔥";
+    animation: obstacleFloat 2s ease-in-out infinite;
+}
+
+.obstacle.type-lava::after {
+    background: radial-gradient(circle at 70% 70%, rgba(255, 200, 0, 0.4), transparent);
+    animation: obstaclePulse 1.5s ease-in-out infinite;
+}
+
+/* TIPO 2: FUEGO */
+.obstacle.type-fire {
+    background: radial-gradient(circle at 30% 30%, #ffaa00, #ff6600, #cc3300);
+    box-shadow: 0 0 40px rgba(255, 102, 0, 0.9), 
+                inset -10px -10px 20px rgba(0, 0, 0, 0.4),
+                inset 10px 10px 20px rgba(255, 150, 0, 0.6);
+}
+
+.obstacle.type-fire::before {
+    content: "🧨";
+    animation: obstacleFlare 1s ease-in-out infinite;
+}
+
+.obstacle.type-fire::after {
+    background: radial-gradient(circle at 60% 40%, rgba(255, 150, 0, 0.6), transparent);
+    animation: obstacleBurn 1s ease-in-out infinite;
+}
+
+/* TIPO 3: HIELO */
+.obstacle.type-ice {
+    background: radial-gradient(circle at 30% 30%, #00ffff, #0099ff, #0055aa);
+    box-shadow: 0 0 40px rgba(0, 200, 255, 0.9),
+                inset -10px -10px 20px rgba(0, 0, 100, 0.3),
+                inset 10px 10px 20px rgba(100, 200, 255, 0.5);
+}
+
+.obstacle.type-ice::before {
+    content: "❄️";
+    animation: obstacleFreeze 2.5s ease-in-out infinite;
+}
+
+.obstacle.type-ice::after {
+    background: radial-gradient(circle at 70% 70%, rgba(100, 200, 255, 0.4), transparent);
+    animation: obstacleGlimmer 1.2s ease-in-out infinite;
+}
+
+/* TIPO 4: VENENO */
+.obstacle.type-poison {
+    background: radial-gradient(circle at 30% 30%, #00ff00, #00dd00, #008800);
+    box-shadow: 0 0 35px rgba(0, 255, 0, 0.8),
+                inset -10px -10px 20px rgba(0, 100, 0, 0.3),
+                inset 10px 10px 20px rgba(100, 255, 100, 0.5);
+}
+
+.obstacle.type-poison::before {
+    content: "☠️";
+    animation: obstacleVenom 1.8s ease-in-out infinite;
+}
+
+.obstacle.type-poison::after {
+    background: radial-gradient(circle at 70% 70%, rgba(150, 255, 150, 0.4), transparent);
+    animation: obstacleToxic 1.4s ease-in-out infinite;
+}
+
+/* TIPO 5: ELECTRICIDAD */
+.obstacle.type-electric {
+    background: radial-gradient(circle at 30% 30%, #ffff00, #ffaa00, #ff6600);
+    box-shadow: 0 0 50px rgba(255, 255, 0, 0.9),
+                inset -10px -10px 20px rgba(100, 100, 0, 0.3),
+                inset 10px 10px 20px rgba(255, 220, 0, 0.6);
+}
+
+.obstacle.type-electric::before {
+    content: "⚡";
+    animation: obstacleShock 0.8s ease-in-out infinite;
+}
+
+.obstacle.type-electric::after {
+    background: radial-gradient(circle at 70% 70%, rgba(255, 255, 150, 0.5), transparent);
+    animation: obstacleCrackle 0.6s ease-in-out infinite;
+}
+
+/* Animación de flotación del símbolo */
+@keyframes obstacleFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* Animación de llamarada */
+@keyframes obstacleFlare {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-10px) scale(1.15);
+    }
+}
+
+/* Animación de quemadura */
+@keyframes obstacleBurn {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(255, 102, 0, 0.6);
+    }
+    50% {
+        transform: scale(1.2);
+        box-shadow: 0 0 50px rgba(255, 102, 0, 1);
+    }
+}
+
+/* Animación de congelamiento */
+@keyframes obstacleFreeze {
+    0%, 100% {
+        transform: rotateZ(0deg) scale(1);
+    }
+    50% {
+        transform: rotateZ(180deg) scale(1.05);
+    }
+}
+
+/* Animación de brillo gélido */
+@keyframes obstacleGlimmer {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+}
+
+/* Animación de veneno */
+@keyframes obstacleVenom {
+    0%, 100% {
+        transform: translateY(0) rotateZ(0deg);
+    }
+    25% {
+        transform: translateY(-5px) rotateZ(5deg);
+    }
+    75% {
+        transform: translateY(5px) rotateZ(-5deg);
+    }
+}
+
+/* Animación tóxica */
+@keyframes obstacleToxic {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    }
+    50% {
+        transform: scale(1.15);
+        box-shadow: 0 0 40px rgba(0, 255, 0, 1);
+    }
+}
+
+/* Animación de shocker */
+@keyframes obstacleShock {
+    0%, 100% {
+        transform: translateX(0) scale(1);
+    }
+    25% {
+        transform: translateX(-3px) scale(1.1);
+    }
+    75% {
+        transform: translateX(3px) scale(1.1);
+    }
+}
+
+/* Animación de chispa */
+@keyframes obstacleCrackle {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+/* Animación de pulsación general */
+@keyframes obstaclePulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(255, 51, 51, 0.6);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 40px rgba(255, 51, 51, 1);
+    }
+}
+
+/* Animación de aparición */
+@keyframes obstaclePop {
+    from {
+        transform: translateX(-50%) scale(0.3);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+    }
 }
 
 /* Panel de decisión */
@@ -544,6 +830,22 @@ body {
 .feedback {
     margin-top: 15px;
     font-size: 0.95rem;
+}
+
+.restart-btn {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #ff9800;
+    color: #fff;
+    font-size: 1rem;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.restart-btn:hover {
+    background-color: #ffb74d;
 }
 
 .mobile-controls {

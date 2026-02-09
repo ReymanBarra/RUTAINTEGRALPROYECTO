@@ -18,7 +18,10 @@
 
         <!-- Barra de progreso -->
         <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-bar" id="progressBar">
+                <div class="score-display" id="scoreDisplay">⭐ 0</div>
+            </div>
+            <div class="attempts-display" id="attemptsDisplay">❤️ 3</div>
         </div>
 
         <!-- Escenario del juego -->
@@ -50,7 +53,11 @@
                 </div>
 
                 <p class="feedback" id="feedback"></p>
+                <button class="restart-btn" id="restartBtn" style="display: none;">Reintentar</button>
             </div>
+
+            <!-- Contenedor de partículas para efectos -->
+            <div class="particles-container" id="particlesContainer"></div>
 
             <div class="mobile-controls" id="mobileControls">
                 <button id="btnLeft">◀</button>

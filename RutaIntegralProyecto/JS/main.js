@@ -1,6 +1,28 @@
 // JS/main.js
 const startSfx = new Audio('assets/sound/start_button.mp3');
+// Música del menú (selección / info)
+const menuMusic = new Audio('assets/sound/moodmode-game-8-bit-on-278083.mp3');
+menuMusic.loop = true;
+menuMusic.volume = 0.35;
 
+// Función para intentar reproducir música inmediatamente
+function playMenuMusicAggressive() {
+    // Intento directo (tan pronto como sea posible)
+    menuMusic.play().then(() => {
+        console.log('✓ Música del menú iniciada automáticamente');
+        try { localStorage.setItem('audioAllowed', 'true'); } catch (e) {}
+    }).catch(() => {
+        console.log('⚠ Autoplay bloqueado, iniciar al primer clic...');
+        // Fallback: Al primer clic
+        document.addEventListener('click', function startMenuMusicOnce() {
+            menuMusic.play().catch(() => {});
+            try { localStorage.setItem('audioAllowed', 'true'); } catch (e) {}
+        }, { once: true });
+    });
+}
+
+// Ejecutar inmediatamente sin esperar DOM
+playMenuMusicAggressive();
 // Variables para selección de personaje
 let selectedCharacter = 'estudiante';
 const imgBase = 'assets/img/personajes/';
@@ -50,9 +72,12 @@ function setupEventListeners() {
     if (btnStart) {
         btnStart.addEventListener("click", (e) => {
             e.preventDefault();
-            
-            // Ejecución del efecto de sonido
-            startSfx.play().catch(err => console.error("Error de audio inicial:", err));
+
+            // Ejecutar efecto de sonido (botón)
+            startSfx.play().catch(err => console.error("Error de SFX inicial:", err));
+
+            // Pausar la música del menú antes de cambiar de página
+            try { menuMusic.pause(); menuMusic.currentTime = 0; } catch (err) {}
 
             // Guardar personaje seleccionado en localStorage
             localStorage.setItem('selectedCharacter', selectedCharacter);
@@ -194,12 +219,46 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('characterModal')) {
         initializeCharacterScreen();
     }
-    
+
     // Botón de volver (funciona en cualquier página)
     const btnBack = document.getElementById("btnBack");
     if (btnBack) {
         btnBack.addEventListener("click", () => {
             window.location.href = "../index.html";
         });
+    }
+    // Intentar reproducir música del menú al cargar (si el navegador lo permite)
+    try {
+        menuMusic.play().then(() => {
+            try { localStorage.setItem('audioAllowed', 'true'); } catch (e) {}
+        }).catch(() => {
+            // Si no se puede reproducir, reproducirla al primer clic como fallback
+            document.addEventListener('click', () => {
+                menuMusic.play().catch(() => {});
+            }, { once: true });
+        });
+    } catch (err) {
+        document.addEventListener('click', () => { menuMusic.play().catch(() => {}); }, { once: true });
+    }
+});
+
+// Pausar música del menú al salir de la página
+window.addEventListener('beforeunload', () => {
+    menuMusic.pause();
+    menuMusic.currentTime = 0;
+});
+
+// Reiniciar música cuando se regresa a la página (desde bfcache o navegación)
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        // Página restaurada desde bfcache
+        playMenuMusicAggressive();
+    }
+});
+
+// Reiniciar música cuando la pestaña vuelve a estar activa
+window.addEventListener('focus', () => {
+    if (menuMusic.paused) {
+        playMenuMusicAggressive();
     }
 });
